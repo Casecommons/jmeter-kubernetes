@@ -74,6 +74,9 @@ kubectl create -n $tenant -f $working_dir/jmeter_master_configmap.yaml
 
 kubectl create -n $tenant -f $working_dir/jmeter_master_deploy.yaml
 
+echo "Create storage class"
+
+kubectl apply -f encrypted-gp2.yaml
 
 echo "Creating Influxdb and the service"
 

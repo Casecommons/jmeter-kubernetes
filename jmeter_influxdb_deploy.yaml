@@ -1,11 +1,12 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: influxdb-jmeter
   labels:
     app: influxdb-jmeter
 spec:
   replicas: 1
+  serviceName: influxdb-jmeter
   selector:
     matchLabels:
       app: influxdb-jmeter
@@ -21,6 +22,8 @@ spec:
           volumeMounts:
           - name: config-volume
             mountPath: /etc/influxdb
+          - name: influxdbdir
+            mountPath: /var/lib/influxdb
           ports:
             - containerPort: 8083
               name: influx
@@ -32,3 +35,12 @@ spec:
       - name: config-volume
         configMap:
          name: influxdb-config
+  volumeClaimTemplates:
+  - metadata:
+      name: influxdbdir
+    spec:
+      storageClassName: encrypted-gp2
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 20Gi
